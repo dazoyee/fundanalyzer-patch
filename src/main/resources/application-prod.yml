@@ -1,0 +1,19 @@
+server:
+  port: 8892
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/fundanalyzer?serverTimezone=Asia/Tokyo
+    username: fundanalyzer
+    password: fundanalyzer
+    driverClassName: com.mysql.jdbc.Driver
+  thymeleaf:
+    encoding: UTF-8
+
+logging:
+  level: info
+
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}-main
