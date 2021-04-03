@@ -25,7 +25,7 @@ public class PatchCommandLineRunner implements CommandLineRunner {
     }
 
     @Override
-    public void run(final String... args) throws Exception {
+    public void run(final String... args) {
         log.info("command line runner start.");
         Arrays.stream(args).forEach(
                 commandOptionsAsString -> {
@@ -33,6 +33,14 @@ public class PatchCommandLineRunner implements CommandLineRunner {
                         case DOCUMENT_PERIOD:
                             processor.documentPeriod();
                             listener.documentPeriod();
+                            break;
+                        case UPDATE_FINANCIAL_STATEMENT:
+                            processor.updateFinancialStatement();
+                            listener.updateFinancialStatement();
+                            break;
+                        case UPDATE_ANALYSIS_RESULT:
+//                            processor.updateAnalysisResult();
+//                            listener.updateAnalysisResult();
                             break;
                         default:
                             log.info("{} についてはの処理はありません。", commandOptionsAsString);

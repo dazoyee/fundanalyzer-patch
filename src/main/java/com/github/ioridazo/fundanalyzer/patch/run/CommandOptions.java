@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 public enum CommandOptions {
     DOCUMENT_PERIOD("1"),
+    UPDATE_FINANCIAL_STATEMENT("2"),
+    UPDATE_ANALYSIS_RESULT("3"),
     DEFAULT("99"),
     ;
 

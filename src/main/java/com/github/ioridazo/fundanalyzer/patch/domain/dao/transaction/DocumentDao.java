@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class DocumentDao {
@@ -42,8 +43,11 @@ public class DocumentDao {
     @Transactional
     public void updateDocumentPeriod(final Document document) {
         jdbcTemplate.update(
-                "UPDATE document set document_period = :documentPeriod",
-                new MapSqlParameterSource("documentPeriod", document.getDocumentPeriod())
+                "UPDATE document SET document_period = :documentPeriod WHERE document_id = :documentId",
+                new MapSqlParameterSource(Map.of(
+                        "documentPeriod", document.getDocumentPeriod(),
+                        "documentId", document.getDocumentId()
+                ))
         );
     }
 }

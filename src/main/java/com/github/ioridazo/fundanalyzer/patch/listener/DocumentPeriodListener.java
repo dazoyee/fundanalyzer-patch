@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
-public class DocumentPeriodListener implements PatchListener {
+public class DocumentPeriodListener {
 
     private static final Logger log = LogManager.getLogger(DocumentPeriodListener.class);
 
@@ -22,7 +22,6 @@ public class DocumentPeriodListener implements PatchListener {
         this.documentDao = documentDao;
     }
 
-    @Override
     public void documentPeriod() {
         final List<Document> documentList = documentDao.selectByDocumentTypeCode(DocTypeCode.AMENDED_SECURITIES_REPORT);
 

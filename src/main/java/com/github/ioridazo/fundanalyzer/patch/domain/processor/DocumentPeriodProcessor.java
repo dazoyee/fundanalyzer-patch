@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Component
-public class DocumentPeriodProcessor implements PatchProcessor {
+public class DocumentPeriodProcessor {
 
     private static final Logger log = LogManager.getLogger(DocumentPeriodProcessor.class);
 
@@ -27,7 +27,6 @@ public class DocumentPeriodProcessor implements PatchProcessor {
         this.edinetDocumentDao = edinetDocumentDao;
     }
 
-    @Override
     public void documentPeriod() {
         log.info("[START] update document period");
         // 更新するdocument一覧
