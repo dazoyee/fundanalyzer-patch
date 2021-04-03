@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.times;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 class UpdateFinancialStatementProcessorTest {
@@ -73,7 +73,7 @@ class UpdateFinancialStatementProcessorTest {
                 "e4", LocalDate.of(2021, 1,1), LocalDate.of(2021,12,31)))
                 .thenReturn(edinetDocument4);
 
-        assertDoesNotThrow(() -> processor.updateFinancialStatement());
+        assertDoesNotThrow(() -> processor.execute());
 
         financialStatement1.setDocumentTypeCode("120");
         financialStatement1.setDocumentId("d1");
@@ -105,11 +105,11 @@ class UpdateFinancialStatementProcessorTest {
                 "e1", LocalDate.of(2021, 1,1), LocalDate.of(2021,12,31)))
                 .thenReturn(edinetDocument1);
 
-        assertDoesNotThrow(() -> processor.updateFinancialStatement());
+        assertDoesNotThrow(() -> processor.execute());
 
         financialStatement1.setDocumentTypeCode("120");
         financialStatement1.setDocumentId("d1");
         financialStatement1.setSubmitDate(LocalDate.parse("2020-05-22"));
-        Mockito.verify(financialStatementDao, Mockito.times(0)).updateFinancialStatement(financialStatement1);
+        Mockito.verify(financialStatementDao, Mockito.times(0)).updateFinancialStatement(any());
     }
 }

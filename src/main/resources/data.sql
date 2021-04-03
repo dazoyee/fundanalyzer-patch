@@ -1,7 +1,28 @@
 -- test data
+-- update analysis result
+insert into industry(name, created_at)
+values ('i2', sysdate)
+;
+
+insert into company(code, company_name, industry_id, edinet_code, created_at, updated_at)
+values ('00000', '', 1, 'ec0000', sysdate, sysdate),
+       ('99999', '', 1, 'ec9999', sysdate, sysdate)
+;
+
+insert into document (document_id, edinet_code, document_type_code, document_period, submit_date, created_at,
+                      updated_at)
+values ('TEST0008', 'ec9999', '120', '2021-03-28', sysdate, sysdate, sysdate),
+       ('TEST0009', 'ec0000', '120', '2021-04-03', sysdate, sysdate, sysdate)
+;
+
+insert into analysis_result (company_code, document_period, corporate_value, document_type_code, submit_date,
+                             document_id, created_at)
+values ('00000', '2021-04-03', 10, '000', sysdate, 'TEST0008', sysdate)
+;
+
 -- update financial statement
 insert into industry(name, created_at)
-values ('', sysdate)
+values ('i1', sysdate)
 ;
 
 insert into company(company_name, industry_id, edinet_code, created_at, updated_at)
@@ -9,18 +30,18 @@ values ('', 1, 'ec0001', sysdate, sysdate)
 ;
 
 insert into document (document_id, document_type_code, document_period, submit_date, created_at, updated_at)
-values ('SAMPLE01', '120', '2021-03-28', sysdate, sysdate, sysdate),
-       ('TEST0006', '120', '2021-03-28', sysdate, sysdate, sysdate)
+values ('TEST0006', '120', '2021-03-28', sysdate, sysdate, sysdate),
+       ('TEST0007', '120', '2021-03-28', sysdate, sysdate, sysdate)
 ;
 
 insert into financial_statement (edinet_code, financial_statement_id, subject_id, period_start, period_end,
                                  document_type_code, submit_date, document_id, created_at)
-values ('ec0001', '1', '1', '2021-03-28', '2021-03-28', '000', sysdate, 'SAMPLE01', sysdate)
+values ('ec0001', '1', '1', '2021-03-28', '2021-03-28', '000', sysdate, 'TEST0006', sysdate)
 ;
 
 insert into edinet_document (doc_id, edinet_code, doc_type_code, period_start, period_end, submit_date_time,
                              parent_doc_id, created_at)
-values ('TEST0006', 'ec0001', 120, '2021-03-28', '2021-03-28', '2021-04-03 09:00', NULL, sysdate)
+values ('TEST0007', 'ec0001', 120, '2021-03-28', '2021-03-28', '2021-04-03 09:00', NULL, sysdate)
 ;
 
 -- document period

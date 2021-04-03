@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +36,23 @@ public class DocumentDao {
         return jdbcTemplate.query(
                 "SELECT * FROM document WHERE document_type_code = :documentTypeCode",
                 new MapSqlParameterSource("documentTypeCode", docTypeCode.toValue()),
+                new BeanPropertyRowMapper<>(Document.class)
+        );
+    }
+
+    @NewSpan("select document by document_type_code and edinet_code and document_period")
+    public List<Document> selectByDocumentTypeCodeAndEdinetCodeAndDocumentPeriod(
+            final DocTypeCode docTypeCode, final String edinetCode, final LocalDate documentPeriod) {
+        return jdbcTemplate.query(
+                "SELECT * FROM document " +
+                        "WHERE document_type_code = :documentTypeCode " +
+                        "AND edinet_code = :edinetCode " +
+                        "AND document_period = :documentPeriod",
+                new MapSqlParameterSource(Map.of(
+                        "documentTypeCode", docTypeCode.toValue(),
+                        "edinetCode", edinetCode,
+                        "documentPeriod", documentPeriod
+                )),
                 new BeanPropertyRowMapper<>(Document.class)
         );
     }

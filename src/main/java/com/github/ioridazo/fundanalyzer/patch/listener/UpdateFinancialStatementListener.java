@@ -19,7 +19,7 @@ public class UpdateFinancialStatementListener {
         this.financialStatementDao = financialStatementDao;
     }
 
-    public void updateFinancialStatement() {
+    public void execute() {
         final List<FinancialStatement> financialStatementList = financialStatementDao.selectAll();
 
         final int countAll = financialStatementList.size();

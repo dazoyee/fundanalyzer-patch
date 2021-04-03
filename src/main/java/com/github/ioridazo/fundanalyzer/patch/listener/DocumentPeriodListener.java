@@ -22,7 +22,7 @@ public class DocumentPeriodListener {
         this.documentDao = documentDao;
     }
 
-    public void documentPeriod() {
+    public void execute() {
         final List<Document> documentList = documentDao.selectByDocumentTypeCode(DocTypeCode.AMENDED_SECURITIES_REPORT);
 
         final int target = documentList.size();

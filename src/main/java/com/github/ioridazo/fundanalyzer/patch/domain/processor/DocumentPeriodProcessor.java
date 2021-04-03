@@ -27,7 +27,7 @@ public class DocumentPeriodProcessor {
         this.edinetDocumentDao = edinetDocumentDao;
     }
 
-    public void documentPeriod() {
+    public void execute() {
         log.info("[START] update document period");
         // 更新するdocument一覧
         final List<Document> documentList = documentDao.selectByDocumentTypeCode(DocTypeCode.AMENDED_SECURITIES_REPORT);
@@ -44,6 +44,7 @@ public class DocumentPeriodProcessor {
                 // document_periodを更新
                 document.setDocumentPeriod(parentDocument.getDocumentPeriod());
                 documentDao.updateDocumentPeriod(document);
+                log.info("{}", document);
             } catch (NoSuchElementException e) {
                 log.warn(
                         "親書類を取得できませんでした。\t対象書類ID:{}\t書類種別コード:{}",

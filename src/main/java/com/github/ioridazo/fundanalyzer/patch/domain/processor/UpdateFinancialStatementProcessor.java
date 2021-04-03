@@ -28,7 +28,7 @@ public class UpdateFinancialStatementProcessor {
         this.edinetDocumentDao = edinetDocumentDao;
     }
 
-    public void updateFinancialStatement() {
+    public void execute() {
         log.info("[START] update financial statement");
         // 更新するfinancial_statement一覧
         final List<FinancialStatement> financialStatementList = financialStatementDao.selectAll();
@@ -52,6 +52,7 @@ public class UpdateFinancialStatementProcessor {
                 financialStatement.setSubmitDate(LocalDateTime.parse(submitDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")).toLocalDate());
 
                 financialStatementDao.updateFinancialStatement(financialStatement);
+                log.info("{}", financialStatement);
             } catch (NullPointerException e) {
                 log.warn("必須項目に値がありません。" +
                                 "\tfinancial_statement_id:{}\tdoc_type_code:{}\tdoc_id:{}\tsubmit_date:{}",
@@ -61,5 +62,6 @@ public class UpdateFinancialStatementProcessor {
                         edinetDocument.getSubmitDateTime());
             }
         });
+        log.info("[END] update financial statement");
     }
 }
