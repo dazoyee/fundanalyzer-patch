@@ -2,10 +2,14 @@ package com.github.ioridazo.fundanalyzer.patch.domain.dao.transaction;
 
 import com.github.ioridazo.fundanalyzer.patch.domain.entity.transaction.EdinetDocument;
 import org.springframework.cloud.sleuth.annotation.NewSpan;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
+import java.util.Map;
 
 @Repository
 public class EdinetDocumentDao {
@@ -23,5 +27,26 @@ public class EdinetDocumentDao {
                 new MapSqlParameterSource("docId", docId),
                 new BeanPropertyRowMapper<>(EdinetDocument.class)
         );
+    }
+
+    @NewSpan("select edinet_document by edinet_code and period_start and period_end")
+    public EdinetDocument selectByEdinetCodeAndPeriodStartAndPeriodEnd(
+            final String edinetCode, final LocalDate periodStart, final LocalDate periodEnd) {
+        try {
+            return jdbcTemplate.queryForObject(
+                    "SELECT * FROM edinet_document " +
+                            "WHERE edinet_code = :edinetCode " +
+                            "AND period_start = :periodStart " +
+                            "AND period_end = :periodEnd",
+                    new MapSqlParameterSource(Map.of(
+                            "edinetCode", edinetCode,
+                            "periodStart", periodStart,
+                            "periodEnd", periodEnd
+                    )),
+                    new BeanPropertyRowMapper<>(EdinetDocument.class)
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 }

@@ -9,7 +9,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class DocumentDao {
@@ -38,12 +40,32 @@ public class DocumentDao {
         );
     }
 
+    @NewSpan("select document by document_type_code and edinet_code and document_period")
+    public List<Document> selectByDocumentTypeCodeAndEdinetCodeAndDocumentPeriod(
+            final DocTypeCode docTypeCode, final String edinetCode, final LocalDate documentPeriod) {
+        return jdbcTemplate.query(
+                "SELECT * FROM document " +
+                        "WHERE document_type_code = :documentTypeCode " +
+                        "AND edinet_code = :edinetCode " +
+                        "AND document_period = :documentPeriod",
+                new MapSqlParameterSource(Map.of(
+                        "documentTypeCode", docTypeCode.toValue(),
+                        "edinetCode", edinetCode,
+                        "documentPeriod", documentPeriod
+                )),
+                new BeanPropertyRowMapper<>(Document.class)
+        );
+    }
+
     @NewSpan("update document set document_period")
     @Transactional
     public void updateDocumentPeriod(final Document document) {
         jdbcTemplate.update(
-                "UPDATE document set document_period = :documentPeriod",
-                new MapSqlParameterSource("documentPeriod", document.getDocumentPeriod())
+                "UPDATE document SET document_period = :documentPeriod WHERE document_id = :documentId",
+                new MapSqlParameterSource(Map.of(
+                        "documentPeriod", document.getDocumentPeriod(),
+                        "documentId", document.getDocumentId()
+                ))
         );
     }
 }

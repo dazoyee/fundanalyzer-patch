@@ -48,7 +48,7 @@ class DocumentPeriodProcessorTest {
         Mockito.when(edinetDocumentDao.selectByDocId("documentId")).thenReturn(edinetDocument);
         Mockito.when(documentDao.selectByDocumentId("parentDocId")).thenReturn(parentDocument);
 
-        assertDoesNotThrow(() -> processor.documentPeriod());
+        assertDoesNotThrow(() -> processor.execute());
 
         final Document updateDocument = new Document();
         updateDocument.setDocumentId("documentId");
@@ -71,7 +71,7 @@ class DocumentPeriodProcessorTest {
         Mockito.when(documentDao.selectByDocumentTypeCode(DocTypeCode.AMENDED_SECURITIES_REPORT)).thenReturn(List.of(document));
         Mockito.when(edinetDocumentDao.selectByDocId("documentId")).thenReturn(edinetDocument);
 
-        assertDoesNotThrow(() -> processor.documentPeriod());
+        assertDoesNotThrow(() -> processor.execute());
 
         Mockito.verify(documentDao, Mockito.times(0)).updateDocumentPeriod(any());
     }
