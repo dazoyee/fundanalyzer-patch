@@ -3,6 +3,7 @@ package com.github.ioridazo.fundanalyzer.patch.domain.dao.transaction;
 import com.github.ioridazo.fundanalyzer.patch.domain.entity.DocTypeCode;
 import com.github.ioridazo.fundanalyzer.patch.domain.entity.transaction.Document;
 import org.springframework.cloud.sleuth.annotation.NewSpan;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class DocumentDao {
@@ -23,12 +25,16 @@ public class DocumentDao {
     }
 
     @NewSpan("select document by document_id")
-    public Document selectByDocumentId(final String documentId) {
-        return jdbcTemplate.queryForObject(
-                "SELECT * FROM document WHERE document_id = :documentId",
-                new MapSqlParameterSource("documentId", documentId),
-                new BeanPropertyRowMapper<>(Document.class)
-        );
+    public Optional<Document> selectByDocumentId(final String documentId) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(
+                    "SELECT * FROM document WHERE document_id = :documentId",
+                    new MapSqlParameterSource("documentId", documentId),
+                    new BeanPropertyRowMapper<>(Document.class)
+            ));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @NewSpan("select document by document_type_code")

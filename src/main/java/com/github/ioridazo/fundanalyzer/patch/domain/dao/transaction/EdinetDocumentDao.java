@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class EdinetDocumentDao {
@@ -30,10 +31,10 @@ public class EdinetDocumentDao {
     }
 
     @NewSpan("select edinet_document by edinet_code and period_start and period_end")
-    public EdinetDocument selectByEdinetCodeAndPeriodStartAndPeriodEnd(
+    public Optional<EdinetDocument> selectByEdinetCodeAndPeriodStartAndPeriodEnd(
             final String edinetCode, final LocalDate periodStart, final LocalDate periodEnd) {
         try {
-            return jdbcTemplate.queryForObject(
+            return Optional.ofNullable(jdbcTemplate.queryForObject(
                     "SELECT * FROM edinet_document " +
                             "WHERE edinet_code = :edinetCode " +
                             "AND period_start = :periodStart " +
@@ -44,9 +45,9 @@ public class EdinetDocumentDao {
                             "periodEnd", periodEnd
                     )),
                     new BeanPropertyRowMapper<>(EdinetDocument.class)
-            );
+            ));
         } catch (EmptyResultDataAccessException e) {
-            return null;
+            return Optional.empty();
         }
     }
 }

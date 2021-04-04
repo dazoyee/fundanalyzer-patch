@@ -7,6 +7,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 public class UpdateAnalysisResultListener {
@@ -34,16 +36,32 @@ public class UpdateAnalysisResultListener {
         } else {
             log.warn("一部のanalysis_resultは更新できませんでした。\tcount:{}", countAll);
             if (countAll != countDocumentTypeCode) {
-                log.info("document_type_code更新数:{}", countDocumentTypeCode);
+                log.info("document_type_code\t更新数:{}\t:未更新数{}", countDocumentTypeCode, countAll - countDocumentTypeCode);
+                final String analysisResultIds = analysisResultList.stream()
+                        .filter(analysisResult -> Objects.isNull(analysisResult.getDocumentTypeCode()))
+                        .map(AnalysisResult::getId)
+                        .map(String::valueOf)
+                        .collect(Collectors.joining(","));
+                log.info("確認id:{}", analysisResultIds);
             }
             if (countAll != countDocumentId) {
-                log.info("document_id更新数:{}", countDocumentId);
+                log.info("document_id\t更新数:{}\t:未更新数{}", countDocumentId, countAll - countDocumentId);
+                final String analysisResultIds = analysisResultList.stream()
+                        .filter(analysisResult -> Objects.isNull(analysisResult.getDocumentId()))
+                        .map(AnalysisResult::getId)
+                        .map(String::valueOf)
+                        .collect(Collectors.joining(","));
+                log.info("確認id:{}", analysisResultIds);
             }
             if (countAll != countSubmitDate) {
-                log.info("submit_date更新数:{}", countSubmitDate);
+                log.info("submit_date\t更新数:{}\t:未更新数{}", countSubmitDate, countAll - countSubmitDate);
+                final String analysisResultIds = analysisResultList.stream()
+                        .filter(analysisResult -> Objects.isNull(analysisResult.getSubmitDate()))
+                        .map(AnalysisResult::getId)
+                        .map(String::valueOf)
+                        .collect(Collectors.joining(","));
+                log.info("確認id:{}", analysisResultIds);
             }
         }
-
-
     }
 }
