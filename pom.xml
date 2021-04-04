@@ -12,7 +12,7 @@
 
     <groupId>com.github.ioridazo</groupId>
     <artifactId>fundanalyzer-patch</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
     <name>fundanalyzer-patch</name>
     <description>patch for fundanalyzer application</description>
 
