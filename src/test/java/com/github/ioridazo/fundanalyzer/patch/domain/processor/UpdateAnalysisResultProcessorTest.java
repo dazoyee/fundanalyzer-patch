@@ -53,10 +53,12 @@ class UpdateAnalysisResultProcessorTest {
         document1.setDocumentId("d1");
         document1.setDocumentTypeCode("120");
         document1.setSubmitDate(LocalDate.of(2021, 4, 1));
+        document1.setNumberOfSharesDocumentPath("");
         var document2 = new Document();
         document2.setDocumentId("d2");
         document2.setDocumentTypeCode("120");
         document2.setSubmitDate(LocalDate.of(2021, 4, 2));
+        document2.setNumberOfSharesDocumentPath("");
         var document3 = new Document();
         document3.setDocumentId("d3");
         document3.setDocumentTypeCode("120");
@@ -87,7 +89,7 @@ class UpdateAnalysisResultProcessorTest {
         analysisResult3.setDocumentTypeCode("120");
         analysisResult3.setSubmitDate(LocalDate.of(2021, 4, 3));
         analysisResult3.setDocumentId("d3");
-        Mockito.verify(analysisResultDao, Mockito.times(1)).updateAnalysisResult(analysisResult3);
+        Mockito.verify(analysisResultDao, Mockito.times(0)).updateAnalysisResult(analysisResult3);
     }
 
     @Test
