@@ -1,8 +1,10 @@
 package com.github.ioridazo.fundanalyzer.patch.domain.processor;
 
+import com.github.ioridazo.fundanalyzer.patch.domain.dao.master.CompanyDao;
 import com.github.ioridazo.fundanalyzer.patch.domain.dao.transaction.DocumentDao;
 import com.github.ioridazo.fundanalyzer.patch.domain.dao.transaction.EdinetDocumentDao;
 import com.github.ioridazo.fundanalyzer.patch.domain.entity.DocTypeCode;
+import com.github.ioridazo.fundanalyzer.patch.domain.entity.master.Company;
 import com.github.ioridazo.fundanalyzer.patch.domain.entity.transaction.Document;
 import com.github.ioridazo.fundanalyzer.patch.domain.entity.transaction.EdinetDocument;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +13,7 @@ import org.mockito.Mockito;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
@@ -19,6 +22,7 @@ class DocumentPeriodProcessorTest {
 
     private DocumentDao documentDao;
     private EdinetDocumentDao edinetDocumentDao;
+    private CompanyDao companyDao;
 
     private DocumentPeriodProcessor processor;
 
@@ -26,32 +30,40 @@ class DocumentPeriodProcessorTest {
     void setUp() {
         documentDao = Mockito.mock(DocumentDao.class);
         edinetDocumentDao = Mockito.mock(EdinetDocumentDao.class);
+        companyDao = Mockito.mock(CompanyDao.class);
 
-        processor = new DocumentPeriodProcessor(documentDao, edinetDocumentDao);
+        processor = new DocumentPeriodProcessor(documentDao, edinetDocumentDao, companyDao);
     }
 
     @Test
     void documentPeriod_ok() {
-        final Document document = new Document();
+        var company = new Company();
+        company.setCode("c");
+        company.setEdinetCode("ec");
+
+        var document = new Document();
         document.setDocumentId("documentId");
+        document.setEdinetCode("ec");
         document.setDocumentTypeCode("130");
 
-        final EdinetDocument edinetDocument = new EdinetDocument();
+        var edinetDocument = new EdinetDocument();
         edinetDocument.setDocId("documentId");
         edinetDocument.setParentDocId("parentDocId");
 
-        final Document parentDocument = new Document();
+        var parentDocument = new Document();
         parentDocument.setDocumentId("parentDocId");
         parentDocument.setDocumentPeriod(LocalDate.of(2021, 3, 28));
 
+        Mockito.when(companyDao.selectAll()).thenReturn(List.of(company));
         Mockito.when(documentDao.selectByDocumentTypeCode(DocTypeCode.AMENDED_SECURITIES_REPORT)).thenReturn(List.of(document));
         Mockito.when(edinetDocumentDao.selectByDocId("documentId")).thenReturn(edinetDocument);
-        Mockito.when(documentDao.selectByDocumentId("parentDocId")).thenReturn(parentDocument);
+        Mockito.when(documentDao.selectByDocumentId("parentDocId")).thenReturn(Optional.of(parentDocument));
 
         assertDoesNotThrow(() -> processor.execute());
 
-        final Document updateDocument = new Document();
+        var updateDocument = new Document();
         updateDocument.setDocumentId("documentId");
+        updateDocument.setEdinetCode("ec");
         updateDocument.setDocumentTypeCode("130");
         updateDocument.setDocumentPeriod(LocalDate.of(2021, 3, 28));
 
@@ -60,11 +72,11 @@ class DocumentPeriodProcessorTest {
 
     @Test
     void documentPeriod_ng() {
-        final Document document = new Document();
+        var document = new Document();
         document.setDocumentId("documentId");
         document.setDocumentTypeCode("130");
 
-        final EdinetDocument edinetDocument = new EdinetDocument();
+        var edinetDocument = new EdinetDocument();
         edinetDocument.setDocId("documentId");
         edinetDocument.setParentDocId("parentDocId");
 

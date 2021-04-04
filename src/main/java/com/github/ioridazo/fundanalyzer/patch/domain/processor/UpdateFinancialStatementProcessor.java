@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Component
 public class UpdateFinancialStatementProcessor {
@@ -35,31 +36,38 @@ public class UpdateFinancialStatementProcessor {
         log.info("更新する対象のカラムは{}件です。", financialStatementList.size());
 
         financialStatementList.forEach(financialStatement -> {
-            final EdinetDocument edinetDocument = edinetDocumentDao.selectByEdinetCodeAndPeriodStartAndPeriodEnd(
+            final Optional<EdinetDocument> edinetDocument = edinetDocumentDao.selectByEdinetCodeAndPeriodStartAndPeriodEnd(
                     financialStatement.getEdinetCode(),
                     financialStatement.getPeriodStart(),
                     financialStatement.getPeriodEnd()
             );
 
-            try {
-                final String docTypeCode = Objects.requireNonNull(edinetDocument.getDocTypeCode());
-                final String docId = Objects.requireNonNull(edinetDocument.getDocId());
-                final String submitDateTime = Objects.requireNonNull(edinetDocument.getSubmitDateTime());
+            if (edinetDocument.isPresent()){
+                try {
+                    final String docTypeCode = Objects.requireNonNull(edinetDocument.get().getDocTypeCode());
+                    final String docId = Objects.requireNonNull(edinetDocument.get().getDocId());
+                    final String submitDateTime = Objects.requireNonNull(edinetDocument.get().getSubmitDateTime());
 
-                // financial_statementを更新
-                financialStatement.setDocumentTypeCode(docTypeCode);
-                financialStatement.setDocumentId(docId);
-                financialStatement.setSubmitDate(LocalDateTime.parse(submitDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")).toLocalDate());
+                    // financial_statementを更新
+                    financialStatement.setDocumentTypeCode(docTypeCode);
+                    financialStatement.setDocumentId(docId);
+                    financialStatement.setSubmitDate(LocalDateTime.parse(submitDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")).toLocalDate());
 
-                financialStatementDao.updateFinancialStatement(financialStatement);
-                log.info("{}", financialStatement);
-            } catch (NullPointerException e) {
-                log.warn("必須項目に値がありません。" +
-                                "\tfinancial_statement_id:{}\tdoc_type_code:{}\tdoc_id:{}\tsubmit_date:{}",
-                        financialStatement.getId(),
-                        edinetDocument.getDocTypeCode(),
-                        edinetDocument.getDocId(),
-                        edinetDocument.getSubmitDateTime());
+                    financialStatementDao.updateFinancialStatement(financialStatement);
+                    log.info("{}", financialStatement);
+                } catch (NullPointerException e) {
+                    log.warn("必須項目に値がありません。" +
+                                    "\tfinancial_statement_id:{}\tdoc_type_code:{}\tdoc_id:{}\tsubmit_date:{}",
+                            financialStatement.getId(),
+                            edinetDocument.get().getDocTypeCode(),
+                            edinetDocument.get().getDocId(),
+                            edinetDocument.get().getSubmitDateTime());
+                }
+            }else {
+                log.warn("edinet_documentが存在しませんでした。\tedinet_code:{}\tperiod_start:{}\tperiod_end:{}",
+                        financialStatement.getEdinetCode(),
+                        financialStatement.getPeriodStart(),
+                        financialStatement.getPeriodEnd());
             }
         });
         log.info("[END] update financial statement");

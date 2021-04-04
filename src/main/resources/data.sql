@@ -53,12 +53,13 @@ values ('TEST0001', '120', '2021-03-28', NULL, sysdate),
        ('TEST0005', '130', NULL, 'TEST0003', sysdate)
 ;
 
-insert into document (document_id, document_type_code, document_period, submit_date, created_at, updated_at)
-values ('TEST0001', '120', '2021-03-28', sysdate, sysdate, sysdate),
-       ('TEST0002', '130', NULL, sysdate, sysdate, sysdate),
-       ('TEST0003', '120', '2021-03-28', sysdate, sysdate, sysdate),
-       ('TEST0004', '130', NULL, sysdate, sysdate, sysdate),
-       ('TEST0005', '130', NULL, sysdate, sysdate, sysdate)
+insert into document (document_id, edinet_code, document_type_code, document_period, submit_date, created_at,
+                      updated_at)
+values ('TEST0001', 'ec0000', '120', '2021-03-28', sysdate, sysdate, sysdate),
+       ('TEST0002', 'ec0000', '130', NULL, sysdate, sysdate, sysdate),
+       ('TEST0003', 'ec0000', '120', '2021-03-28', sysdate, sysdate, sysdate),
+       ('TEST0004', 'ec0000', '130', NULL, sysdate, sysdate, sysdate),
+       ('TEST0005', 'ec0000', '130', NULL, sysdate, sysdate, sysdate)
 ;
 
 -- scraping_keyword

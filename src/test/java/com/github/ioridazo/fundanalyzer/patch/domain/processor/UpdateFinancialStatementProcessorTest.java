@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,15 +49,15 @@ class UpdateFinancialStatementProcessorTest {
         financialStatement4.setPeriodStart(LocalDate.of(2021, 1,1));
         financialStatement4.setPeriodEnd(LocalDate.of(2021,12,31));
 
-        final EdinetDocument edinetDocument1 = new EdinetDocument();
+        var edinetDocument1 = new EdinetDocument();
         edinetDocument1.setDocTypeCode("120");
         edinetDocument1.setDocId("d1");
         edinetDocument1.setSubmitDateTime("2020-05-22 09:09");
-        final EdinetDocument edinetDocument2 = new EdinetDocument();
+        var edinetDocument2 = new EdinetDocument();
         edinetDocument2.setDocTypeCode("120");
         edinetDocument2.setDocId("d2");
         edinetDocument2.setSubmitDateTime("2021-05-22 09:09");
-        final EdinetDocument edinetDocument4 = new EdinetDocument();
+        var edinetDocument4 = new EdinetDocument();
         edinetDocument4.setDocTypeCode("120");
         edinetDocument4.setDocId("d4");
         edinetDocument4.setSubmitDateTime("2021-06-22 09:09");
@@ -65,13 +66,13 @@ class UpdateFinancialStatementProcessorTest {
                 .thenReturn(List.of(financialStatement1, financialStatement2,financialStatement3,financialStatement4));
         Mockito.when(edinetDocumentDao.selectByEdinetCodeAndPeriodStartAndPeriodEnd(
                 "e1", LocalDate.of(2021, 1,1), LocalDate.of(2021,12,31)))
-                .thenReturn(edinetDocument1);
+                .thenReturn(Optional.of(edinetDocument1));
         Mockito.when(edinetDocumentDao.selectByEdinetCodeAndPeriodStartAndPeriodEnd(
                 "e2", LocalDate.of(2021, 1,1), LocalDate.of(2021,12,31)))
-                .thenReturn(edinetDocument2);
+                .thenReturn(Optional.of(edinetDocument2));
         Mockito.when(edinetDocumentDao.selectByEdinetCodeAndPeriodStartAndPeriodEnd(
                 "e4", LocalDate.of(2021, 1,1), LocalDate.of(2021,12,31)))
-                .thenReturn(edinetDocument4);
+                .thenReturn(Optional.of(edinetDocument4));
 
         assertDoesNotThrow(() -> processor.execute());
 
@@ -96,14 +97,14 @@ class UpdateFinancialStatementProcessorTest {
         financialStatement1.setPeriodStart(LocalDate.of(2021, 1,1));
         financialStatement1.setPeriodEnd(LocalDate.of(2021,12,31));
 
-        final EdinetDocument edinetDocument1 = new EdinetDocument();
+        var edinetDocument1 = new EdinetDocument();
         edinetDocument1.setDocTypeCode("120");
         edinetDocument1.setDocId("d1");
 
         Mockito.when(financialStatementDao.selectAll()).thenReturn(List.of(financialStatement1));
         Mockito.when(edinetDocumentDao.selectByEdinetCodeAndPeriodStartAndPeriodEnd(
                 "e1", LocalDate.of(2021, 1,1), LocalDate.of(2021,12,31)))
-                .thenReturn(edinetDocument1);
+                .thenReturn(Optional.of(edinetDocument1));
 
         assertDoesNotThrow(() -> processor.execute());
 
