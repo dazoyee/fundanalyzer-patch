@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class UpdateFinancialStatementProcessor {
@@ -32,21 +32,25 @@ public class UpdateFinancialStatementProcessor {
     public void execute() {
         log.info("[START] update financial statement");
         // 更新するfinancial_statement一覧
-        final List<FinancialStatement> financialStatementList = financialStatementDao.selectAll();
+        final List<FinancialStatement> financialStatementList = financialStatementDao.selectAll().stream()
+                .filter(financialStatement -> Objects.isNull(financialStatement.getDocumentTypeCode())
+                        || Objects.isNull(financialStatement.getDocumentId())
+                        || Objects.isNull(financialStatement.getSubmitDate()))
+                .collect(Collectors.toList());
         log.info("更新する対象のカラムは{}件です。", financialStatementList.size());
 
-        financialStatementList.forEach(financialStatement -> {
-            final Optional<EdinetDocument> edinetDocument = edinetDocumentDao.selectByEdinetCodeAndPeriodStartAndPeriodEnd(
+        financialStatementList.parallelStream().forEach(financialStatement -> {
+            final List<EdinetDocument> edinetDocumentList = edinetDocumentDao.selectByEdinetCodeAndPeriodStartAndPeriodEnd(
                     financialStatement.getEdinetCode(),
                     financialStatement.getPeriodStart(),
                     financialStatement.getPeriodEnd()
             );
 
-            if (edinetDocument.isPresent()){
+            if (edinetDocumentList.size() == 1) {
                 try {
-                    final String docTypeCode = Objects.requireNonNull(edinetDocument.get().getDocTypeCode());
-                    final String docId = Objects.requireNonNull(edinetDocument.get().getDocId());
-                    final String submitDateTime = Objects.requireNonNull(edinetDocument.get().getSubmitDateTime());
+                    final String docTypeCode = Objects.requireNonNull(edinetDocumentList.get(0).getDocTypeCode());
+                    final String docId = Objects.requireNonNull(edinetDocumentList.get(0).getDocId());
+                    final String submitDateTime = Objects.requireNonNull(edinetDocumentList.get(0).getSubmitDateTime());
 
                     // financial_statementを更新
                     financialStatement.setDocumentTypeCode(docTypeCode);
@@ -59,12 +63,17 @@ public class UpdateFinancialStatementProcessor {
                     log.warn("必須項目に値がありません。" +
                                     "\tfinancial_statement_id:{}\tdoc_type_code:{}\tdoc_id:{}\tsubmit_date:{}",
                             financialStatement.getId(),
-                            edinetDocument.get().getDocTypeCode(),
-                            edinetDocument.get().getDocId(),
-                            edinetDocument.get().getSubmitDateTime());
+                            edinetDocumentList.get(0).getDocTypeCode(),
+                            edinetDocumentList.get(0).getDocId(),
+                            edinetDocumentList.get(0).getSubmitDateTime());
                 }
-            }else {
+            } else if (edinetDocumentList.isEmpty()) {
                 log.warn("edinet_documentが存在しませんでした。\tedinet_code:{}\tperiod_start:{}\tperiod_end:{}",
+                        financialStatement.getEdinetCode(),
+                        financialStatement.getPeriodStart(),
+                        financialStatement.getPeriodEnd());
+            } else {
+                log.warn("edinet_documentが複数存在したので処理できませんでした。\tedinet_code:{}\tperiod_start:{}\tperiod_end:{}",
                         financialStatement.getEdinetCode(),
                         financialStatement.getPeriodStart(),
                         financialStatement.getPeriodEnd());

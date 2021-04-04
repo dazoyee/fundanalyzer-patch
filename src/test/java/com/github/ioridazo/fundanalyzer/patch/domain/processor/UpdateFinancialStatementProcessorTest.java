@@ -66,13 +66,13 @@ class UpdateFinancialStatementProcessorTest {
                 .thenReturn(List.of(financialStatement1, financialStatement2,financialStatement3,financialStatement4));
         Mockito.when(edinetDocumentDao.selectByEdinetCodeAndPeriodStartAndPeriodEnd(
                 "e1", LocalDate.of(2021, 1,1), LocalDate.of(2021,12,31)))
-                .thenReturn(Optional.of(edinetDocument1));
+                .thenReturn(List.of(edinetDocument1));
         Mockito.when(edinetDocumentDao.selectByEdinetCodeAndPeriodStartAndPeriodEnd(
                 "e2", LocalDate.of(2021, 1,1), LocalDate.of(2021,12,31)))
-                .thenReturn(Optional.of(edinetDocument2));
+                .thenReturn(List.of(edinetDocument2));
         Mockito.when(edinetDocumentDao.selectByEdinetCodeAndPeriodStartAndPeriodEnd(
                 "e4", LocalDate.of(2021, 1,1), LocalDate.of(2021,12,31)))
-                .thenReturn(Optional.of(edinetDocument4));
+                .thenReturn(List.of(edinetDocument4));
 
         assertDoesNotThrow(() -> processor.execute());
 
@@ -104,7 +104,7 @@ class UpdateFinancialStatementProcessorTest {
         Mockito.when(financialStatementDao.selectAll()).thenReturn(List.of(financialStatement1));
         Mockito.when(edinetDocumentDao.selectByEdinetCodeAndPeriodStartAndPeriodEnd(
                 "e1", LocalDate.of(2021, 1,1), LocalDate.of(2021,12,31)))
-                .thenReturn(Optional.of(edinetDocument1));
+                .thenReturn(List.of(edinetDocument1));
 
         assertDoesNotThrow(() -> processor.execute());
 

@@ -2,15 +2,14 @@ package com.github.ioridazo.fundanalyzer.patch.domain.dao.transaction;
 
 import com.github.ioridazo.fundanalyzer.patch.domain.entity.transaction.EdinetDocument;
 import org.springframework.cloud.sleuth.annotation.NewSpan;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Repository
 public class EdinetDocumentDao {
@@ -31,23 +30,19 @@ public class EdinetDocumentDao {
     }
 
     @NewSpan("select edinet_document by edinet_code and period_start and period_end")
-    public Optional<EdinetDocument> selectByEdinetCodeAndPeriodStartAndPeriodEnd(
+    public List<EdinetDocument> selectByEdinetCodeAndPeriodStartAndPeriodEnd(
             final String edinetCode, final LocalDate periodStart, final LocalDate periodEnd) {
-        try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(
-                    "SELECT * FROM edinet_document " +
-                            "WHERE edinet_code = :edinetCode " +
-                            "AND period_start = :periodStart " +
-                            "AND period_end = :periodEnd",
-                    new MapSqlParameterSource(Map.of(
-                            "edinetCode", edinetCode,
-                            "periodStart", periodStart,
-                            "periodEnd", periodEnd
-                    )),
-                    new BeanPropertyRowMapper<>(EdinetDocument.class)
-            ));
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+        return jdbcTemplate.query(
+                "SELECT * FROM edinet_document " +
+                        "WHERE edinet_code = :edinetCode " +
+                        "AND period_start = :periodStart " +
+                        "AND period_end = :periodEnd",
+                new MapSqlParameterSource(Map.of(
+                        "edinetCode", edinetCode,
+                        "periodStart", periodStart,
+                        "periodEnd", periodEnd
+                )),
+                new BeanPropertyRowMapper<>(EdinetDocument.class)
+        );
     }
 }

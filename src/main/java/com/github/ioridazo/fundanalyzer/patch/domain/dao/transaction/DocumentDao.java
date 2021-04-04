@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -67,9 +68,13 @@ public class DocumentDao {
     @Transactional
     public void updateDocumentPeriod(final Document document) {
         jdbcTemplate.update(
-                "UPDATE document SET document_period = :documentPeriod WHERE document_id = :documentId",
+                "UPDATE document SET " +
+                        "document_period = :documentPeriod, " +
+                        "updated_at = :updatedAt " +
+                        "WHERE document_id = :documentId",
                 new MapSqlParameterSource(Map.of(
                         "documentPeriod", document.getDocumentPeriod(),
+                        "updatedAt", LocalDateTime.now(),
                         "documentId", document.getDocumentId()
                 ))
         );
