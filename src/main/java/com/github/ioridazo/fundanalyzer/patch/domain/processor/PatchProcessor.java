@@ -9,16 +9,19 @@ public class PatchProcessor {
     private final UpdateFinancialStatementProcessor updateFinancialStatement;
     private final UpdateAnalysisResultProcessor updateAnalysisResult;
     private final UpdateValuationProcessor updateValuation;
+    private final UpdateStockPriceProcessor updateStockPrice;
 
     public PatchProcessor(
             final DocumentPeriodProcessor documentPeriod,
             final UpdateFinancialStatementProcessor updateFinancialStatement,
             final UpdateAnalysisResultProcessor updateAnalysisResult,
-            final UpdateValuationProcessor updateValuation) {
+            final UpdateValuationProcessor updateValuation,
+            final UpdateStockPriceProcessor updateStockPrice) {
         this.documentPeriod = documentPeriod;
         this.updateFinancialStatement = updateFinancialStatement;
         this.updateAnalysisResult = updateAnalysisResult;
         this.updateValuation = updateValuation;
+        this.updateStockPrice = updateStockPrice;
     }
 
     public void documentPeriod() {
@@ -35,5 +38,9 @@ public class PatchProcessor {
 
     public void updateValuation() {
         updateValuation.execute();
+    }
+
+    public void updateStockPrice() {
+        updateStockPrice.execute();
     }
 }

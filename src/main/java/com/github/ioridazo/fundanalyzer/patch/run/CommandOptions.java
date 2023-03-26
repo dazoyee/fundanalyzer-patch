@@ -7,6 +7,7 @@ public enum CommandOptions {
     UPDATE_FINANCIAL_STATEMENT("2"),
     UPDATE_ANALYSIS_RESULT("3"),
     UPDATE_VALUATION("4"),
+    UPDATE_STOCK_PRICE("5"),
     DEFAULT("99"),
     ;
 

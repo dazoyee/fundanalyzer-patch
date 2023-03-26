@@ -43,6 +43,7 @@ public class PatchCommandLineRunner implements CommandLineRunner {
                             listener.updateAnalysisResult();
                         }
                         case UPDATE_VALUATION -> processor.updateValuation();
+                        case UPDATE_STOCK_PRICE -> processor.updateStockPrice();
                         default -> log.info("{} についてはの処理はありません。", commandOptionsAsString);
                     }
                 }
