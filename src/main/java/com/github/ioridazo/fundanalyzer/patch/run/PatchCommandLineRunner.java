@@ -30,20 +30,20 @@ public class PatchCommandLineRunner implements CommandLineRunner {
         Arrays.stream(args).forEach(
                 commandOptionsAsString -> {
                     switch (CommandOptions.fromValue(commandOptionsAsString)) {
-                        case DOCUMENT_PERIOD:
+                        case DOCUMENT_PERIOD -> {
                             processor.documentPeriod();
                             listener.documentPeriod();
-                            break;
-                        case UPDATE_FINANCIAL_STATEMENT:
+                        }
+                        case UPDATE_FINANCIAL_STATEMENT -> {
                             processor.updateFinancialStatement();
                             listener.updateFinancialStatement();
-                            break;
-                        case UPDATE_ANALYSIS_RESULT:
+                        }
+                        case UPDATE_ANALYSIS_RESULT -> {
                             processor.updateAnalysisResult();
                             listener.updateAnalysisResult();
-                            break;
-                        default:
-                            log.info("{} についてはの処理はありません。", commandOptionsAsString);
+                        }
+                        case UPDATE_VALUATION -> processor.updateValuation();
+                        default -> log.info("{} についてはの処理はありません。", commandOptionsAsString);
                     }
                 }
         );

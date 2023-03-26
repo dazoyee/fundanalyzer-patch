@@ -6,6 +6,7 @@ public enum CommandOptions {
     DOCUMENT_PERIOD("1"),
     UPDATE_FINANCIAL_STATEMENT("2"),
     UPDATE_ANALYSIS_RESULT("3"),
+    UPDATE_VALUATION("4"),
     DEFAULT("99"),
     ;
 
@@ -20,10 +21,6 @@ public enum CommandOptions {
                 .filter(v -> v.value.equals(value))
                 .findFirst()
                 .orElse(CommandOptions.DEFAULT);
-    }
-
-    public String getValue() {
-        return value;
     }
 
     @Override
